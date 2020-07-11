@@ -26,17 +26,17 @@ exports.register = async (req, res) => {
 			birthdate,
 			gender,
 		}
-		
+
 		await user.create(newUser)
-		res.status(201).json({
+		return res.status(201).json({
 			status: 201,
 			message: 'registration success',
 			data: newUser
 		})
 	}
 	catch(e) {
-		res.status(500).json({
-			status: 500,
+		res.status(400).json({
+			status: 400,
 			message: 'cannot register',
 			err: e
 		})
