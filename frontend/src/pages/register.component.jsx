@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { authRegisterUser } from '../redux/auth/auth.actions'
 
 import './register.styles.scss'
+import Tooltip from '../components/tooltip/tooltip.component'
 
 class Register extends Component {
 	state = {
@@ -20,7 +25,7 @@ class Register extends Component {
 		],
 		days: Array.from(Array(31), (_, i) => i + 1),
 		years: Array.from(Array(70), (_, i) => new Date().getFullYear() - i),
-		success: false,
+		errors: [],
 		model: {
 			mobileNumber: '',
 			firstName: '',
@@ -57,28 +62,72 @@ class Register extends Component {
 
 	handleSubmit = (e) => {
 		e.preventDefault()
+		const errors = []
+		const {
+			firstName,
+			lastName,
+			email,
+			gender,
+			mobileNumber,
+			birthDate,
+		} = this.state.model
+
+		if (!firstName) {
+			errors.push('First name is required')
+		}
+
+		if (!lastName) {
+			errors.push('Last name is required')
+		}
+
+		if (!mobileNumber) {
+			errors.push('Mobile number is required')
+		}
+
+		if (!email) {
+			errors.push('Email is required')
+		}
+
+		if (errors.length) {
+			return this.setState({ errors })
+		}
+
+		const newUser = {
+			email: email,
+			first_name: firstName,
+			last_name: lastName,
+			mobile_number: mobileNumber,
+			gender: gender,
+			birth_date:
+				birthDate.date && birthDate.month && birthDate.date
+					? new Date(birthDate.year + birthDate.month + birthDate.date)
+					: null,
+		}
+		this.props.authRegisterUser(newUser)
 	}
 	render() {
 		const {
-			error,
+			errors,
 			months,
 			days,
 			years,
 			model: { firstName, lastName, email, mobileNumber },
 		} = this.state
+		const { errorMessage, isLoading, isSuccess } = this.props
+
+		if (isLoading) {
+			return <h1>Loading ...</h1>
+		}
 		return (
 			<div className='register'>
 				<div className='form'>
 					<div className='form-title'>Registration</div>
-					{error && (
-						<div className='tooltip'>
-							<span>Error</span>
-							<span>Error</span>
-							<span>Error</span>
-						</div>
-					)}
+					{errors.map((err) => (
+						<Tooltip key={err} info={err} />
+					))}
+					{errorMessage && <Tooltip info={errorMessage} />}
 					<form
-						className={error ? 'grayout' : null}
+						className={isSuccess ? 'grayout' : null}
 						onSubmit={this.handleSubmit}
 					>
 						<fieldset>
@@ -116,13 +165,13 @@ class Register extends Component {
 								<label htmlFor='birthdate'>Date of Birth</label>
 								<div className='select'>
 									<select
-										defaultValue='-'
+										defaultValue=''
 										className='birthdate'
 										name='month'
 										id='month'
 										onChange={this.handleCHange}
 									>
-										<option disabled value='-'>
+										<option disabled value=''>
 											Month
 										</option>
 										{months.map((month) => (
@@ -133,12 +182,15 @@ class Register extends Component {
 									</select>
 
 									<select
+										defaultValue=''
 										className='birthdate'
 										name='date'
 										id='date'
 										onChange={this.handleCHange}
 									>
-										<option value='0'>Date</option>
+										<option disabled value=''>
+											Date
+										</option>
 										{days.map((day) => (
 											<option key={day} value={day}>
 												{day}
@@ -147,12 +199,15 @@ class Register extends Component {
 									</select>
 
 									<select
+										defaultValue=''
 										className='birthdate'
 										name='year'
 										id='year'
 										onChange={this.handleCHange}
 									>
-										<option value='0'>Year</option>
+										<option disabled value=''>
+											Year
+										</option>
 										{years.map((year) => (
 											<option key={year} value={year}>
 												{year}
@@ -198,9 +253,26 @@ class Register extends Component {
 							</button>
 						</fieldset>
 					</form>
+					{isSuccess && (
+						<Link to="/login">
+							<button type='button' className='btn'>
+								Login
+							</button>
+						</Link>
+					)}
 				</div>
 			</div>
 		)
 	}
 }
-export default Register
+
+const mapStateToProps = (state) => ({
+	isLoading: state.auth.isLoading,
+	errorMessage: state.auth.errorMessage,
+	isSuccess: state.auth.isSuccess,
+})
+const mapDispatchToProps = (dispatch) => ({
+	authRegisterUser: (user) => dispatch(authRegisterUser(user)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register)
