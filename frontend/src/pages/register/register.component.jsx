@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { authRegisterUser } from '../../redux/auth/auth.actions'
+import { authRegisterUser, clearGrayOut } from '../../redux/auth/auth.actions'
 import { isValidDate } from '../../utils/util'
 
 import './register.styles.scss'
@@ -114,6 +114,9 @@ class Register extends Component {
 
 		this.props.authRegisterUser(newUser)
 		this.setState({ errors: []})
+	}
+	componentDidMount() {
+		this.props.clearGrayOut()
 	}
 	render() {
 		const {
@@ -294,6 +297,7 @@ const mapStateToProps = (state) => ({
 })
 const mapDispatchToProps = (dispatch) => ({
 	authRegisterUser: (user) => dispatch(authRegisterUser(user)),
+	clearGrayOut: () => dispatch(clearGrayOut())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register)

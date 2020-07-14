@@ -13,10 +13,11 @@ export const authRegisterUser = (user) => async (dispatch) => {
 			payload: data,
 		})
 	} catch (e) {
-		console.log({e})
+		console.log({ e })
 		let message = null
 		if (e.response && e.response.data) {
-			message = e.response.data.errors.message || 'Oops ... something went wrong'
+			message =
+				e.response.data.errors.message || 'Oops ... something went wrong'
 		} else {
 			message = e.response.statusText
 		}
@@ -25,4 +26,8 @@ export const authRegisterUser = (user) => async (dispatch) => {
 			payload: message,
 		})
 	}
+}
+
+export const clearGrayOut = () => dispatch => {
+	dispatch({type: AuthActionTypes.AUTH_CLEAR_GRAY_OUT})
 }

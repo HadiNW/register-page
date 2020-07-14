@@ -52,10 +52,10 @@ exports.register = async (req, res) => {
 			first_name,
 			last_name,
 			mobile_number,
-			birthdate: userBirthDate,
+			birthdate,
 			gender,
 		}
-		
+
 		await user.create(newUser)
 		return res.status(201).json({
 			status: 201,
@@ -63,6 +63,7 @@ exports.register = async (req, res) => {
 			data: newUser,
 		})
 	} catch (e) {
+		console.log({e})
 		if (e.errno) {
 			return res.status(400).json({
 				status: 400,
