@@ -2,6 +2,7 @@ import axiosInstance from '../../config/axios'
 import AuthActionTypes from './auth.types'
 
 export const authRegisterUser = (user) => async (dispatch) => {
+	console.log({user})
 	dispatch({
 		type: AuthActionTypes.AUTH_REGISTRATION_START,
 	})

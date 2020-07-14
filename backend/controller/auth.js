@@ -52,10 +52,10 @@ exports.register = async (req, res) => {
 			first_name,
 			last_name,
 			mobile_number: userMobileNumber,
-			birthdate,
+			birthdate: new Date(birthdate),
 			gender,
 		}
-
+		console.log(req.body)
 		await user.create(newUser)
 		return res.status(201).json({
 			status: 201,

@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const serverless = require('serverless-http');
 
 const apiRoutes = require('./routes/index')
 const middlewares = require('./middlewares/index')
@@ -17,3 +18,5 @@ app.get('/ping', (req, res) => {
 
 const PORT = process.env.NODE_ENV === 'PROD' ? 80:7000  
 app.listen(PORT, () => console.log('app started'))
+
+module.exports.handler = serverless(app)
