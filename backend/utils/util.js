@@ -5,5 +5,4 @@ exports.checkReqBody = (body, required) => {
 			return req
 		}
 	}
-
 }
