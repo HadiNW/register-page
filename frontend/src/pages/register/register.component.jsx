@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { authRegisterUser, clearGrayOut } from '../../redux/auth/auth.actions'
-import { isValidDate } from '../../utils/util'
+import { isValidDate, isPhoneNumberValid } from '../../utils/util'
 
 import './register.styles.scss'
 import Tooltip from '../../components/tooltip/tooltip.component'
@@ -88,6 +88,10 @@ class Register extends Component {
 
 		if (!email) {
 			errors.push('Email is required')
+		}
+
+		if (!isPhoneNumberValid(mobileNumber)) {
+			errors.push('Mobile number is invalid')
 		}
 
 		const newUser = {

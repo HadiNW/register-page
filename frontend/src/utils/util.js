@@ -5,3 +5,13 @@ export const isValidDate = (year, month, day) => {
     }
     return false
 }
+
+export const isPhoneNumberValid = (str) => {
+	const patterns = [
+	/^0\d{10,13}$/,
+    /^\+62\d{10,13}$/,
+    /^\(\+62\)\d{10,13}$/,
+	]
+
+	return patterns.some(pattern => pattern.test(str))
+}
