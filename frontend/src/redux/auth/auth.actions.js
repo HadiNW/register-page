@@ -8,18 +8,18 @@ export const authRegisterUser = (user) => async (dispatch) => {
 
 	try {
 		const { data } = await axiosInstance.post('/api/auth/register', user)
-		console.log(data)
 		dispatch({
 			type: AuthActionTypes.AUTH_REGISTRATION_SUCCESS,
 			payload: data,
 		})
 	} catch (e) {
 		console.log({e})
-		let message = e.response.statusText
+		let message = null
 		if (e.response && e.response.data) {
-			message = e.response.data.errors.message
+			message = e.response.data.errors.message || 'Oops ... something went wrong'
+		} else {
+			message = e.response.statusText
 		}
-		console.log({e}, '[][][][]', message)
 		dispatch({
 			type: AuthActionTypes.AUTH_REGISTRATION_FAILURE,
 			payload: message,

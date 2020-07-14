@@ -1,18 +1,18 @@
 import React from 'react';
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 
-import Register from './pages/register.component'
+import RegisterPage from './pages/register/register.component'
 
 import './App.css';
+import LoginPage from './pages/login/login.component';
 
 function App() {
   return (
-	<>
-	<h1>NAVBAR</h1>
    <Switch>
-	   <Route path="/register" component={Register} />
+	   <Route exact path="/" component={() => <Redirect to="/register" />} />
+	   <Route path="/register" component={RegisterPage} />
+	   <Route path="/login" component={LoginPage} />
    </Switch>
-   </>
   );
 }
 

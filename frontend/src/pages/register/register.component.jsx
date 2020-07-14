@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { authRegisterUser } from '../redux/auth/auth.actions'
+import { authRegisterUser } from '../../redux/auth/auth.actions'
+import { isValidDate } from '../../utils/util'
 
 import './register.styles.scss'
-import Tooltip from '../components/tooltip/tooltip.component'
+import Tooltip from '../../components/tooltip/tooltip.component'
+import Button from '../../components/button/button.component'
 
 class Register extends Component {
 	state = {
@@ -33,9 +35,9 @@ class Register extends Component {
 			email: '',
 			gender: null,
 			birthDate: {
-				year: null,
-				month: null,
-				date: null,
+				year: '',
+				month: '',
+				date: '',
 			},
 		},
 	}
@@ -88,22 +90,30 @@ class Register extends Component {
 			errors.push('Email is required')
 		}
 
-		if (errors.length) {
-			return this.setState({ errors })
-		}
-
 		const newUser = {
 			email: email,
 			first_name: firstName,
 			last_name: lastName,
 			mobile_number: mobileNumber,
 			gender: gender,
-			birth_date:
+			birthdate:
 				birthDate.date && birthDate.month && birthDate.date
-					? new Date(birthDate.year + birthDate.month + birthDate.date)
+					? new Date(birthDate.year, birthDate.month, birthDate.date).toUTCString()
 					: null,
 		}
+
+		if (newUser.birthdate) {
+			if (!isValidDate(birthDate.year, birthDate.month, birthDate.date)) {
+				errors.push('birth date is invalid')
+			}
+		}
+
+		if (errors.length) {
+			return this.setState({ errors })
+		}
+
 		this.props.authRegisterUser(newUser)
+		this.setState({ errors: []})
 	}
 	render() {
 		const {
@@ -111,7 +121,14 @@ class Register extends Component {
 			months,
 			days,
 			years,
-			model: { firstName, lastName, email, mobileNumber },
+			model: {
+				firstName,
+				lastName,
+				email,
+				mobileNumber,
+				gender,
+				birthDate: { date, month, year },
+			},
 		} = this.state
 		const { errorMessage, isLoading, isSuccess } = this.props
 
@@ -121,10 +138,16 @@ class Register extends Component {
 		return (
 			<div className='register'>
 				<div className='form'>
-					<div className='form-title'>Registration</div>
-					{errors.map((err) => (
-						<Tooltip key={err} info={err} />
-					))}
+					<div className='form-title'>
+						<h1>Registration</h1>
+					</div>
+					{errors.length > 0 && (
+						<div className='error-notif'>
+							{errors.map((err) => (
+								<Tooltip key={err} info={err} />
+							))}
+						</div>
+					)}
 					{errorMessage && <Tooltip info={errorMessage} />}
 					<form
 						className={isSuccess ? 'grayout' : null}
@@ -165,7 +188,7 @@ class Register extends Component {
 								<label htmlFor='birthdate'>Date of Birth</label>
 								<div className='select'>
 									<select
-										defaultValue=''
+										value={month}
 										className='birthdate'
 										name='month'
 										id='month'
@@ -182,7 +205,7 @@ class Register extends Component {
 									</select>
 
 									<select
-										defaultValue=''
+										value={date}
 										className='birthdate'
 										name='date'
 										id='date'
@@ -199,7 +222,7 @@ class Register extends Component {
 									</select>
 
 									<select
-										defaultValue=''
+										value={year}
 										className='birthdate'
 										name='year'
 										id='year'
@@ -225,6 +248,7 @@ class Register extends Component {
 										id='gender'
 										onChange={this.handleCHange}
 										value={1}
+										checked={gender === '1'}
 									/>
 								</div>
 								<div className='radio'>
@@ -235,6 +259,7 @@ class Register extends Component {
 										id='gender'
 										onChange={this.handleCHange}
 										value={0}
+										checked={gender === '0'}
 									/>
 								</div>
 							</div>
@@ -248,16 +273,12 @@ class Register extends Component {
 									value={email}
 								/>
 							</div>
-							<button type='submit' className='btn'>
-								Register
-							</button>
+							<Button title="Register" type="submit" />
 						</fieldset>
 					</form>
 					{isSuccess && (
-						<Link to="/login">
-							<button type='button' className='btn'>
-								Login
-							</button>
+						<Link to='/login'>
+							<Button title="Login" />
 						</Link>
 					)}
 				</div>

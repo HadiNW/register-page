@@ -1,8 +1,10 @@
 const user = require('../model/user')
-const { checkReqBody } = require('../utils/util')
+const { checkReqBody, isValidDate } = require('../utils/util')
 
 exports.register = async (req, res) => {
 	try {
+		// const data = await this.login()
+		// return res.status(200).json(data)
 		const {
 			email,
 			first_name,
@@ -50,10 +52,10 @@ exports.register = async (req, res) => {
 			first_name,
 			last_name,
 			mobile_number,
-			birthdate,
+			birthdate: userBirthDate,
 			gender,
 		}
-
+		
 		await user.create(newUser)
 		return res.status(201).json({
 			status: 201,
@@ -80,4 +82,7 @@ exports.register = async (req, res) => {
 	}
 }
 
-exports.login = (req, res) => {}
+exports.login = async (req, res) => {
+	return user.find({})
+
+}
