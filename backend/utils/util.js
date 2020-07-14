@@ -6,3 +6,9 @@ exports.checkReqBody = (body, required) => {
 		}
 	}
 }
+
+exports.validatePhoneNumber = (str) => {
+	str = str.replace('(+62)', '0')
+	str = str.replace('+62', '0')
+	return str
+}

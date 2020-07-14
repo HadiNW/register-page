@@ -1,10 +1,8 @@
 const user = require('../model/user')
-const { checkReqBody, isValidDate } = require('../utils/util')
+const { checkReqBody, validatePhoneNumber } = require('../utils/util')
 
 exports.register = async (req, res) => {
 	try {
-		// const data = await this.login()
-		// return res.status(200).json(data)
 		const {
 			email,
 			first_name,
@@ -21,13 +19,13 @@ exports.register = async (req, res) => {
 				status: 422,
 				message: 'unprocessable entity',
 				errors: {
-					message: missingField+' is required',
+					message: missingField + ' is required',
 				},
 			})
 		}
 
-		const emailExists = await user.find({email})
-		if(emailExists.length) {
+		const emailExists = await user.find({ email })
+		if (emailExists.length) {
 			return res.status(400).json({
 				status: 400,
 				message: 'cannot register',
@@ -36,8 +34,10 @@ exports.register = async (req, res) => {
 				},
 			})
 		}
-		const mobileExists = await user.find({mobile_number})
-		if(mobileExists.length) {
+
+		const userMobileNumber = validatePhoneNumber(mobile_number)
+		const mobileExists = await user.find({ mobile_number: userMobileNumber })
+		if (mobileExists.length) {
 			return res.status(400).json({
 				status: 400,
 				message: 'cannot register',
@@ -48,10 +48,10 @@ exports.register = async (req, res) => {
 		}
 
 		const newUser = {
-			email,
+			email: email.toLowerCase(),
 			first_name,
 			last_name,
-			mobile_number,
+			mobile_number: userMobileNumber,
 			birthdate,
 			gender,
 		}
@@ -63,7 +63,6 @@ exports.register = async (req, res) => {
 			data: newUser,
 		})
 	} catch (e) {
-		console.log({e})
 		if (e.errno) {
 			return res.status(400).json({
 				status: 400,
