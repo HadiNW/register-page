@@ -9,6 +9,15 @@ https://register-page.slashknight.com/
 ### Setup
 #### To start the Backend API :
 
+List of env variables (.env file in backend root directory)
+```sh 
+DB_CLIENT
+DB_HOST
+DB_USER
+DB_PASSWORD
+DB_NAME
+API_KEY
+```
 1. Install all dependencies
 ```sh 
 $ npm install
@@ -17,8 +26,6 @@ $ npm install
 ```sh 
 $ npm run dev
 ```
-
-
 
 
 #### To start the Frontend :
